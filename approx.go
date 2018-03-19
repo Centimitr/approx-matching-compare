@@ -67,20 +67,20 @@ func (ged EditDistance) Match(d Dict, s string) string {
 }
 
 type NGramDistance struct {
-	N int
+	N        int
+	cache    [][]string
+	hasCache bool
 }
 
 var ngrams = func(s string, n int) (grams []string) {
+	s = "#" + s + "#"
 	for i := 0; i <= len(s)-n; i++ {
 		grams = append(grams, s[i:i+n])
 	}
 	return
 }
 
-var ngramd = func(a string, b string, n int) int {
-	agrams := ngrams("#"+a+"#", n)
-	bgrams := ngrams("#"+b+"#", n)
-	common := 0
+var common = func(agrams []string, bgrams []string) (common int) {
 	counter := make(map[string]int)
 	for _, g := range agrams {
 		counter[g]++
@@ -93,19 +93,26 @@ var ngramd = func(a string, b string, n int) int {
 			common++
 		}
 	}
-	return len(agrams) + len(bgrams) - 2*common
+	return
 }
 
 func (ngd NGramDistance) Match(dict Dict, s string) string {
+	if !ngd.hasCache {
+		ngd.cache = make([][]string, len(dict.List))
+		for i, word := range dict.List {
+			ngd.cache[i] = ngrams(word, ngd.N)
+		}
+		ngd.hasCache = true
+	}
 	minD := 0
 	minI := 0
-	//dictGrams := make([][]string, len(dict.List))
-	// 4823
+	sgrams := ngrams(s, ngd.N)
 	for i, word := range dict.List {
-		d := ngramd(s, word, ngd.N)
+		d := len(word) - 2*common(sgrams, ngd.cache[i])
 		if i == 0 {
 			minD = d
 		} else if d < minD {
+			minD = d
 			minI = i
 		}
 	}

@@ -6,8 +6,8 @@ import (
 
 func main() {
 	dict := NewDictFromFile("dictionary.txt")
-	misspells := ReadFileAsLines("misspell.txt")[:1]
-	corrects := ReadFileAsLines("correct.txt")[:1]
+	misspells := ReadFileAsLines("misspell.txt")
+	corrects := ReadFileAsLines("correct.txt")
 	t := time.Now()
 	//results := dict.MultiApproxMatch(misspells, NeighbourhoodSearch{K: 1})
 	//results := dict.MultiApproxMatch(misspells, EditDistance{})
