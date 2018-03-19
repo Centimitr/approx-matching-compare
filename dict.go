@@ -10,7 +10,7 @@ type Dict struct {
 }
 
 func NewDictFromFile(filename string) Dict {
-	lines := ReadFileAsLines(filename)
+	lines := ReadFileAsLines(filename)[:100000]
 	d := Dict{
 		lines,
 		make(map[string]struct{}, len(lines)),

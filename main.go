@@ -6,16 +6,18 @@ import (
 
 func main() {
 	dict := NewDictFromFile("dictionary.txt")
-	misspells := ReadFileAsLines("misspell.txt")
-	corrects := ReadFileAsLines("correct.txt")
+	misspells := ReadFileAsLines("misspell.txt")[:1]
+	corrects := ReadFileAsLines("correct.txt")[:1]
 	t := time.Now()
-	ns := NeighbourhoodSearch{K: 1}
-	results := dict.MultiApproxMatch(misspells, ns)
+	//results := dict.MultiApproxMatch(misspells, NeighbourhoodSearch{K: 1})
+	//results := dict.MultiApproxMatch(misspells, EditDistance{})
+	results := dict.MultiApproxMatch(misspells, NGramDistance{N: 2})
 	success := 0
 	fail := 0
 	for i, r := range results {
-		//m := misspells[i]
+		m := misspells[i]
 		c := corrects[i]
+		println(m, r, c)
 		if r == c {
 			success++
 		} else {

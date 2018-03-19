@@ -2,8 +2,12 @@
   <dictionary name="shixiao">
     <words>
       <w>abcdefghijklmnopqrstuvwxyz</w>
+      <w>agrams</w>
       <w>alen</w>
+      <w>bgrams</w>
       <w>devbycm</w>
+      <w>ngramd</w>
+      <w>ngrams</w>
       <w>slen</w>
     </words>
   </dictionary>
