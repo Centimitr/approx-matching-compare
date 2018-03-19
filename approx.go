@@ -2,6 +2,7 @@ package main
 
 import "strings"
 
+// Neighbourhood Search
 type NeighbourhoodSearch struct {
 	K int
 }
@@ -59,28 +60,22 @@ func (ns NeighbourhoodSearch) Match(d Dict, s string) string {
 	return ""
 }
 
-type EditDistance struct {
-}
-
-func (ged EditDistance) Match(d Dict, s string) string {
-	return ""
-}
-
+// N-Gram Distance
 type NGramDistance struct {
-	N        int
-	cache    [][]string
-	hasCache bool
+	N int
 }
 
 var ngrams = func(s string, n int) (grams []string) {
-	s = "#" + s + "#"
 	for i := 0; i <= len(s)-n; i++ {
 		grams = append(grams, s[i:i+n])
 	}
 	return
 }
 
-var common = func(agrams []string, bgrams []string) (common int) {
+var ngramsd = func(a string, b string, n int) int {
+	agrams := ngrams("#"+a+"#", n)
+	bgrams := ngrams("#"+b+"#", n)
+	common := 0
 	counter := make(map[string]int)
 	for _, g := range agrams {
 		counter[g]++
@@ -93,22 +88,47 @@ var common = func(agrams []string, bgrams []string) (common int) {
 			common++
 		}
 	}
-	return
+	return len(agrams) + len(bgrams) - 2*common
 }
 
-func (ngd NGramDistance) Match(dict Dict, s string) string {
-	if !ngd.hasCache {
-		ngd.cache = make([][]string, len(dict.List))
-		for i, word := range dict.List {
-			ngd.cache[i] = ngrams(word, ngd.N)
-		}
-		ngd.hasCache = true
-	}
+func (ngd NGramDistance) Match(d Dict, s string) string {
+	//minD := 0
+	//minI := 0
+	//for i, word := range dict.List {
+	//	d := ngramsd(s, word, ngd.N)
+	//	if i == 0 {
+	//		minD = d
+	//	} else if d < minD {
+	//		minD = d
+	//		minI = i
+	//	}
+	//}
+	//return dict.List[minI]
+	return minDistance(d.List, func(t string) int {
+		return ngramsd(s, t, ngd.N)
+	})
+}
+
+// Edit Distance
+type EditDistance struct {
+}
+
+var editd = func(s, t string) int {
+
+}
+
+func (ged EditDistance) Match(d Dict, s string) string {
+	return minDistance(d.List, func(t string) int {
+		return editd(s, t)
+	})
+}
+
+// util
+func minDistance(list []string, handle func(t string) int) string {
 	minD := 0
 	minI := 0
-	sgrams := ngrams(s, ngd.N)
-	for i, word := range dict.List {
-		d := len(word) - 2*common(sgrams, ngd.cache[i])
+	for i, t := range list {
+		d := handle(t)
 		if i == 0 {
 			minD = d
 		} else if d < minD {
@@ -116,5 +136,5 @@ func (ngd NGramDistance) Match(dict Dict, s string) string {
 			minI = i
 		}
 	}
-	return dict.List[minI]
+	return list[minI]
 }
