@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
-	"fmt"
 )
 
 func ReadFileAsLines(filename string) ([]string) {
@@ -13,10 +12,4 @@ func ReadFileAsLines(filename string) ([]string) {
 		log.Fatal(err)
 	}
 	return strings.Fields(string(content))
-}
-
-func PrintLines(lines []string) {
-	for _, line := range lines {
-		fmt.Println(line)
-	}
 }
