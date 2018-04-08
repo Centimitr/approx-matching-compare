@@ -1,6 +1,18 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
+
+type DirectMatch struct {
+}
+
+func (dm DirectMatch) Match(d Dict, s string) (c []string) {
+	if d.Has(s) {
+		c = append(c, s)
+	}
+	return
+}
 
 // Neighbourhood Search
 type NeighbourhoodSearch struct {
@@ -60,6 +72,22 @@ func (ns NeighbourhoodSearch) Match(d Dict, s string) string {
 	return ""
 }
 
+// util
+func minDistance(list []string, handle func(t string) int) string {
+	minD := 0
+	minI := 0
+	for i, t := range list {
+		d := handle(t)
+		if i == 0 {
+			minD = d
+		} else if d < minD {
+			minD = d
+			minI = i
+		}
+	}
+	return list[minI]
+}
+
 // N-Gram Distance
 type NGramDistance struct {
 	N int
@@ -110,7 +138,7 @@ func (ngd NGramDistance) Match(d Dict, s string) string {
 }
 
 // Edit Distance
-type EditDistance struct {
+type GlobalEditDistance struct {
 }
 
 var min = func(a, b, c int) int {
@@ -147,24 +175,69 @@ var editd = func(s, t string) int {
 	return leftCol[len(ss)]
 }
 
-func (ged EditDistance) Match(d Dict, s string) string {
+func (ged GlobalEditDistance) Match(d Dict, s string) string {
 	return minDistance(d.List, func(t string) int {
 		return editd(s, t)
 	})
 }
 
-// util
-func minDistance(list []string, handle func(t string) int) string {
-	minD := 0
-	minI := 0
-	for i, t := range list {
-		d := handle(t)
-		if i == 0 {
-			minD = d
-		} else if d < minD {
-			minD = d
-			minI = i
+type Soundex struct {
+	Cut int
+}
+
+func runesContains(rs []rune, tg rune) bool {
+	for _, r := range rs {
+		if r == tg {
+			return true
 		}
 	}
-	return list[minI]
+	return false
+}
+
+func soundex(s string, cut int) string {
+	var last rune
+	var result []rune
+	// s is an english string
+	m := map[rune]int{
+		'b': 1,
+		'f': 1,
+		'p': 1,
+		'v': 1,
+		'c': 2,
+		'g': 2,
+		'j': 2,
+		'k': 2,
+		'q': 2,
+		's': 2,
+		'x': 2,
+		'z': 2,
+		'd': 3,
+		't': 3,
+		'l': 4,
+		'm': 5,
+		'n': 5,
+		'r': 6,
+	}
+	for i, r := range s {
+		switch {
+		case i == 0:
+			result = append(result, r)
+		case i == cut:
+			break
+		case last != r:
+			result = append(result, rune(m[r]))
+			last = r
+		}
+	}
+	return string(result)
+}
+
+func (sd Soundex) Match(d Dict, s string) string {
+	ssd := soundex(s, sd.Cut)
+	for _, w := range d.List {
+		if soundex(w, sd.Cut) == ssd {
+			return w
+		}
+	}
+	return ""
 }
