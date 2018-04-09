@@ -2,16 +2,16 @@ package main
 
 import (
 	"time"
-	"fmt"
 )
 
 func main() {
 	t := time.Now()
-	//am := NewApproxMatchRunner()
-	//am.Load("task.json")
-	//am.Stat()
+	am := NewApproxMatchRunner()
+	am.Load("task.json")
+	am.Stat()
+	am.Run(DirectMatch{})
+	//am.Run(NeighbourhoodSearch{K: 1})
+	am.Save("result.json")
 	since := time.Since(t)
-	since = time.Hour
-
-	fmt.Println("TIME: " + since.String())
+	print("TIME: " + since.String())
 }
