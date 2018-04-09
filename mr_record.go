@@ -44,14 +44,14 @@ func numbers(ns []int) (sum int, avg float64, min, max int) {
 	return
 }
 
-func (r ApproxMatchRecord) Stat(corrects []string) {
+func (r *ApproxMatchRecord) Stat(corrects []string) {
 	if r.Lock {
 		return
 	}
 	r.TotalTime, r.AvgTime, r.MinTime, r.MaxTime = numbers(r.Times)
 }
 
-func (r ApproxMatchRecord) Cmp(baseRecord ApproxMatchRecord) {
+func (r *ApproxMatchRecord) Cmp(baseRecord ApproxMatchRecord) {
 	r.TimeCmp = float64(r.AvgTime) / float64(baseRecord.AvgTime)
 	r.MinTimeCmp = float64(r.MinTime) / float64(baseRecord.MinTime)
 	r.MaxTimeCmp = float64(r.MaxTime) / float64(baseRecord.MaxTime)

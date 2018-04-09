@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>879849 - COMP90049</title>
+    <script src="angular.js"></script>
+    <style>
+        th {
+            text-align: left;
+            font-size: 18px;
+            line-height: 28px;
+            padding-bottom: 12px;
+        }
+
+        thead tr:nth-child(1) th {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+    </style>
+    <script>
+        angular.module("app", [])
+                .controller('ViewerController', async function ($scope) {
+                    const res = await fetch("http://localhost:3000/result.json", {mode: 'no-cors'});
+                    const task = await res.json();
+                    console.log(task.records);
+                    $scope.task = task;
+
+                    const headers = ["mispell", "correct"].concat(task.records.map(r => r.Method + r.Parameter));
+
+
+                    const rows = []
+                    const len = task.misspells.length;
+                    for (let i = 0; i < len; i++) {
+                        const row = {
+                            misspell: task.misspells[i],
+                            correct: task.corrects[i],
+                            candidatesOfMethods: task.records.map(r => r.Candidates[i].join(", ")),
+                            timesOfMethods: task.records.map(r => r.Times[i])
+                        }
+                        rows.push(row)
+                    }
+                    $scope.headers = headers;
+                    $scope.rows = rows;
+                    $scope.$apply();
+                })
+    </script>
+</head>
+<body ng-controller="ViewerController as ctrl">
+<div>
+    <table ng-if="task">
+        <thead>
+        <tr>
+            <th ng-repeat="text in headers">{{text}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in rows">
+            <td>{{row.misspell}}</td>
+            <td>{{row.correct}}</td>
+            <td style="text-align: center" ng-repeat="candidates in row.candidatesOfMethods">
+            {{candidates}}
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+</body>
+</html>

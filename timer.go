@@ -2,47 +2,53 @@ package main
 
 import (
 	"time"
-	"fmt"
+	"strconv"
+	"sync"
 )
 
-func NewTimer(count int, interval time.Duration) Timer {
-	return Timer{N: count, Interval: interval}
+func NewCounter(count int) Counter {
+	return Counter{N: count, RefreshInterval: time.Millisecond * 250, RefreshOnAdd: true}
 }
 
-type Timer struct {
-	N        int
-	Interval time.Duration
-	i        int
-	start    time.Time
-	finish   bool
+type Counter struct {
+	N               int
+	RefreshInterval time.Duration
+	RefreshOnAdd    bool
+	i               int
+	start           time.Time
+	finish          bool
+	wg              sync.WaitGroup
 }
 
-func (t *Timer) Add() {
-	t.i ++
+func (c *Counter) Add() {
+	c.i ++
+	c.wg.Done()
 }
 
-func (t *Timer) Print() {
-	since := time.Since(t.start)
-	fmt.Printf("\r%02d:%02d - %d/%d", int(since.Minutes()), int(since.Seconds())-int(since.Minutes())*60, t.i, t.N)
+func (c *Counter) Print() {
+	print("\r" + time.Since(c.start).String() + " - " + strconv.Itoa(c.i) + "/" + strconv.Itoa(c.N))
+	//fmt.Printf("\r%02d:%02d - %d/%d", int(since.Minutes()),, t.i, t.N)
 }
 
-func (t *Timer) Start() {
-	t.start = time.Now()
-	t.i = 0
-	t.finish = false
+func (c *Counter) Start() {
+	c.wg.Add(c.N)
+	c.start = time.Now()
+	c.i = 0
+	c.finish = false
 	go func() {
 		for {
-			if t.i >= t.N || t.finish {
+			if c.i >= c.N || c.finish {
 				break
 			}
-			t.Print()
-			time.Sleep(t.Interval)
+			c.Print()
+			time.Sleep(c.RefreshInterval)
 		}
 	}()
 }
 
-func (t *Timer) Finish() {
-	t.Print()
-	fmt.Println()
-	t.finish = true
+func (c *Counter) Finish() {
+	c.finish = true
+	c.wg.Wait()
+	c.Print()
+	println()
 }

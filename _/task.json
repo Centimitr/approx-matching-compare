@@ -1,5 +1,7 @@
 {
-  "dictionary": "dictionary.txt",
-  "misspells": "misspell.txt",
-  "corrects": "correct.txt"
+  "path": {
+    "dictionary": "dictionary.txt",
+    "misspells": "misspell.txt",
+    "corrects": "correct.txt"
+  }
 }

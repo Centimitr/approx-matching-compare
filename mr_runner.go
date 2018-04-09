@@ -29,9 +29,11 @@ func (am *ApproxMatchRunner) Load(filename string) {
 	if e != nil {
 		log.Fatal("Read task json failed.")
 	}
-	am.dict = NewDictFromFile(am.task.DictPath)
-	am.misspells = ReadFileAsLines(am.task.MisspellsPath)
-	am.corrects = ReadFileAsLines(am.task.CorrectsPath)
+	am.dict = NewDictFromFile(am.task.Path.Dict)
+	am.task.Misspells = ReadFileAsLines(am.task.Path.Misspells)
+	am.task.Corrects = ReadFileAsLines(am.task.Path.Corrects)
+	am.misspells = am.task.Misspells
+	am.corrects = am.task.Corrects
 }
 
 func (am *ApproxMatchRunner) Save(filename string) {
@@ -42,10 +44,15 @@ func (am *ApproxMatchRunner) Save(filename string) {
 }
 
 func (am *ApproxMatchRunner) Run(method ApproxMatchMethod) {
-	startTime := time.Now().UnixNano()
+	startTime := time.Now()
 	methodName := GetStructName(method)
 	rankedCandidates := make([]RankedStrings, len(am.misspells))
 	times := make([]int, len(am.misspells))
+
+	println("Start: " + methodName + " " + method.Param())
+	counter := NewCounter(len(am.misspells))
+
+	counter.Start()
 	var wg sync.WaitGroup
 	for i, s := range am.misspells {
 		wg.Add(1)
@@ -53,26 +60,30 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod) {
 			start := time.Now()
 			rankedCandidates[i] = method.Match(am.dict, s)
 			times[i] = int(time.Since(start))
+			counter.Add()
 			wg.Done()
 		}(i, s)
 	}
 	wg.Wait()
-	for limit := range method.Limits() {
+	counter.Finish()
+	for _, limit := range method.Limits() {
 		r := ApproxMatchRecord{
 			Method: methodName,
 			Candidates: func() [][]string {
 				result := make([][]string, len(rankedCandidates))
-				for _, rc := range rankedCandidates {
-					result = append(result, rc.Top(limit))
+				for i, rc := range rankedCandidates {
+					result[i] = rc.Top(limit)
 				}
 				return result
 			}(),
 			Parameter: fmt.Sprintf("(%s)-%d", method.Param(), limit),
-			StartTime: int(startTime),
+			StartTime: int(startTime.UnixNano()),
 			Times:     times,
 		}
 		am.task.Records = append(am.task.Records, r)
 	}
+
+	println("Complete: " + time.Since(startTime).String() + "\n")
 }
 
 func (am *ApproxMatchRunner) Stat() {

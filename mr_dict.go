@@ -17,7 +17,7 @@ func NewDictFromFile(filename string) Dict {
 	return d
 }
 
-func (d Dict) Has(s string) bool {
+func (d *Dict) Has(s string) bool {
 	if _, ok := d.Mapping[s]; ok {
 		return true
 	}
