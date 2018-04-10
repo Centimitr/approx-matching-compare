@@ -11,7 +11,9 @@ This program is built with the Go programming language and the frontend use Angu
 2. Run `go build` in the project directory
 3. Move the output executive to `_` directory
 4. Run the executive
-5. Browse `localhost:3000`
+5. Browse `localhost:3000/viewer.html`
+
+This program uses `sort.Slice()`, so it requires Go 1.8+. The frontend uses `async` and `fetch`, therefore please ensure you are using a modern browser, or you will not see the analyse result.
 
 ## Performance
 
@@ -31,7 +33,7 @@ So I think its performance is **quiet good**. The program is not much optimized 
 6. Run the executive
 7. You will get a `result.json`
 8. (If using mac) The executive will also open browser and navigate to `localhost:3000` to show result
-9. You can use `localhost:3000` to see the result detail
+9. You can use `localhost:3000/viewer.html` to see the result detail
 
 ## Sample Output
 
