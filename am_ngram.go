@@ -33,29 +33,6 @@ var wngramsm = func(s string, n int) map[string]int {
 	return m
 }
 
-//var ngramsd = func(agrams []string, bgrams []string) int {
-//	common := 0
-//	counter := make(map[string]int)
-//	for _, g := range agrams {
-//		counter[g]++
-//	}
-//	for _, g := range bgrams {
-//		counter[g]++
-//	}
-//	for _, times := range counter {
-//		if times > 1 {
-//			common++
-//		}
-//	}
-//	return len(agrams) + len(bgrams) - 2*common
-//}
-
-//var ngramsds2 = func(a string, b string, n int) int {
-//	agrams := wngrams(a, n)
-//	bgrams := wngrams(b, n)
-//	return ngramsd(agrams, bgrams)
-//}
-
 var ngramsd = func(agrams, bgrams map[string]int) int {
 	if len(bgrams) < len(agrams) {
 		bgrams, agrams = agrams, bgrams
@@ -80,27 +57,10 @@ func (ngd *NGramDistance) Prepare(runner *ApproxMatchRunner) {
 }
 
 func (ngd *NGramDistance) Match(d Dict, s string) RankedStrings {
-	//minD := 0
-	//minI := 0
-	//for i, word := range dict.List {
-	//	d := ngramsd(s, word, ngd.N)
-	//	if i == 0 {
-	//		minD = d
-	//	} else if d < minD {
-	//		minD = d
-	//		minI = i
-	//	}
-	//}
-	//return dict.List[minI]
-	fmt.Println("START:", s)
 	rs := NewRankedStrings(len(ngd.dictGrams))
 	sgramsm := wngramsm(s, ngd.N)
 	for word, gramsm := range ngd.dictGrams {
 		rs.Put(word, ngramsd(sgramsm, gramsm))
-		ss := ngramsd(sgramsm, gramsm)
-		if ss < 7 {
-			fmt.Println(word, ss)
-		}
 	}
 	return rs
 }

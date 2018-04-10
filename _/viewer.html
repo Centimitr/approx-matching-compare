@@ -12,32 +12,34 @@
             font-size: 18px;
             line-height: 28px;
             padding: 0 18px 8px 0;
-        }
-
-        thead tr:nth-child(1) th {
-            background: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body ng-controller="ViewerController as ctrl">
-<div>
+<div style="width: 100%; overflow: scroll;">
     <table ng-if="task">
         <thead>
         <tr>
             <th>misspell</th>
             <th>correct</th>
             <th>canCorrect</th>
-            <th ng-repeat="text in headers">{{text}}</th>
+            <th ng-repeat="v in headers">{{v}}</th>
+        </tr>
+        <tr>
+            <th colspan="2"></th>
+            <th ng-repeat="v in times track by $index">{{v | date: "H:mm:ss": "UTC"}}</th>
+        </tr>
+        <tr>
+            <th colspan="2">HitRates</th>
+            <th ng-repeat="v in hitRates track by $index">{{v}}</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="row in rows">
             <td>{{row.misspell}}</td>
             <td>{{row.correct}}</td>
-            <td><span ng-show="row.canCorrect">Hit</span></td>
+            <td><span ng-show="row.canCorrect">*</span></td>
             <td style="text-align: left; padding-bottom: 8px" ng-repeat="v in row.candidatesOfMethods track by $index">
                 <div ng-show="v.len">({{v.len}} items<span ng-show="v.hit">, Hit</span>)</div>
                 <div style="max-height: 20px;max-width: 220px; overflow: hidden; text-overflow: ellipsis">

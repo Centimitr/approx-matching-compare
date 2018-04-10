@@ -53,11 +53,14 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	rankedCandidates := make([]RankedStrings, len(am.misspells))
 	times := make([]int, len(am.misspells))
 
-	println("Start: " + method.Name())
+	println("Launch: " + method.Name())
 	counter := NewCounter(len(am.misspells))
 
-	counter.Start()
+	t := time.Now()
 	method.Prepare(am)
+	println("Prepare: " + time.Since(t).String())
+
+	counter.Start()
 	var wg sync.WaitGroup
 	for i, s := range am.misspells {
 		wg.Add(1)
@@ -71,13 +74,16 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	}
 	wg.Wait()
 	counter.Finish()
+	t = time.Now()
 	for _, limit := range limits.Limits() {
 		r := ApproxMatchRecord{
 			Method: methodName,
 			Candidates: func() [][]string {
 				result := make([][]string, len(rankedCandidates))
 				for i, rc := range rankedCandidates {
-					result[i] = rc.Top(limit)
+					go func(i int, rc RankedStrings, limit int) {
+						result[i] = rc.Top(limit)
+					}(i, rc, limit)
 				}
 				return result
 			}(),
@@ -87,8 +93,8 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 		}
 		am.task.Records = append(am.task.Records, r)
 	}
-
-	println("Complete: " + time.Since(startTime).String() + "\n")
+	println("Complete: " + time.Since(t).String())
+	println("Total: " + time.Since(startTime).String() + "\n")
 }
 
 func (am *ApproxMatchRunner) Stat() {

@@ -7,8 +7,10 @@ angular.module("app", [])
         // console.log(task.records);
         $scope.task = task;
 
-        const headers = task.records.map(r => r.Name);
+        // headers
+        $scope.headers = task.records.map(r => r.Name);
 
+        // rows
         const rows = [];
         const len = task.misspells.length;
         for (let i = 0; i < len; i++) {
@@ -28,8 +30,20 @@ angular.module("app", [])
             };
             rows.push(row);
         }
-        console.log(rows);
-        $scope.headers = headers;
+
+        // stats
+        $scope.times = task.records.map(r => r.Times.reduce((a, b) => a + b, 0));
+        $scope.hitRates = [
+            (() => {
+                const total = rows.map(row => row.canCorrect).filter(v => v).length;
+                return `${total}/${rows.length} - ${Math.round(total / rows.length * 10000) / 100}%`
+            })()
+
+        ].concat(task.records.map((r, i) => {
+            const total = rows.map(row => row.candidatesOfMethods[i].hit).filter(b => b).length;
+            return `${total}/${rows.length} - ${Math.round(total / rows.length * 10000) / 100}%`
+        }));
+
         $scope.rows = rows;
         $scope.$apply();
     });

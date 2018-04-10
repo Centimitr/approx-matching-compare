@@ -34,7 +34,6 @@ func WriteJSON(filename string, v interface{}) error {
 	e = ioutil.WriteFile(filename, b, os.ModePerm)
 	return e
 }
-
 func GetStructName(v interface{}) string {
 	return reflect.TypeOf(v).String()
 }
