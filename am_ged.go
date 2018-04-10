@@ -8,6 +8,10 @@ func (ged *GlobalEditDistance) Name() string {
 	return "GED"
 }
 
+func (ged *GlobalEditDistance) Step() int {
+	return 128
+}
+
 var min = func(a, b, c int) int {
 	m := a
 	if b < m {
@@ -49,11 +53,9 @@ func (ged *GlobalEditDistance) Prepare(runner *ApproxMatchRunner) {
 
 func (ged *GlobalEditDistance) Match(d Dict, s string) RankedStrings {
 	rs := NewRankedStrings(len(ged.dictChars))
-	//schars := strings.Split(s, "")
 	srunes := []rune(s)
 	for word, runes := range ged.dictChars {
 		rs.Put(word, editd(runes, srunes))
-		//fmt.Println(word, runes)
 	}
 	return rs
 }

@@ -12,6 +12,10 @@ func (ngd *NGramDistance) Name() string {
 	return fmt.Sprintf("nGram(N=%d)", ngd.N)
 }
 
+func (ngd *NGramDistance) Step() int {
+	return 768
+}
+
 var ngrams = func(s string, n int) (grams []string) {
 	for i := 0; i <= len(s)-n; i++ {
 		grams = append(grams, s[i:i+n])

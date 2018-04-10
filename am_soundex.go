@@ -1,7 +1,10 @@
 package main
 
+import "fmt"
+
 type Soundex struct {
-	Cut int
+	Cut           int
+	dictSoundeces map[string]string
 }
 
 func runesContains(rs []rune, tg rune) bool {
@@ -51,12 +54,28 @@ func soundex(s string, cut int) string {
 	return string(result)
 }
 
-func (sd Soundex) Match(d Dict, s string) string {
+func (sd *Soundex) Name() string {
+	return fmt.Sprintf("Soundex(Cut=%d)", sd.Cut)
+}
+
+func (sd *Soundex) Prepare(runner *ApproxMatchRunner) {
+	sd.dictSoundeces = make(map[string]string, len(runner.dict.List))
+	for _, word := range runner.dict.List {
+		sd.dictSoundeces[word] = soundex(word, sd.Cut)
+	}
+}
+
+func (sd *Soundex) Step() int {
+	return 2048
+}
+
+func (sd *Soundex) Match(d Dict, s string) RankedStrings {
+	rs := NewRankedStrings(0)
 	ssd := soundex(s, sd.Cut)
-	for _, w := range d.List {
-		if soundex(w, sd.Cut) == ssd {
-			return w
+	for word, wsd := range sd.dictSoundeces {
+		if wsd == ssd {
+			rs.Put(word, 0)
 		}
 	}
-	return ""
+	return rs
 }

@@ -16,6 +16,10 @@ func (ns *NeighbourhoodSearch) Name() string {
 	return fmt.Sprintf("Neighbour(K=%d)", ns.K)
 }
 
+func (ns *NeighbourhoodSearch) Step() int {
+	return 2048
+}
+
 var alphabet = strings.Split("abcdefghijklmnopqrstuvwxyz", "")
 var search = func(d Dict, s string, alphabet []string) (candidates []string, next []string) {
 	var word string

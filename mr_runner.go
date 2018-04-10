@@ -9,9 +9,10 @@ import (
 )
 
 type ApproxMatchMethod interface {
-	Prepare(*ApproxMatchRunner)
-	Match(Dict, string) RankedStrings
 	Name() string
+	Prepare(*ApproxMatchRunner)
+	Step() int
+	Match(Dict, string) RankedStrings
 }
 
 type ApproxMatchRunner struct {
@@ -57,20 +58,14 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	println("Launch: " + method.Name())
 	counter := NewCounter(len(am.misspells))
 
-	m := &runtime.MemStats{}
-
-	runtime.ReadMemStats(m)
-	println(m.Alloc / 1000 / 1000)
 	t := time.Now()
 	method.Prepare(am)
 	println("Prepare: " + time.Since(t).String())
 
-	runtime.ReadMemStats(m)
-	println(m.Alloc / 1000 / 1000)
 	counter.Start()
 	var wg sync.WaitGroup
 	var stepWg sync.WaitGroup
-	step := 512
+	step := method.Step()
 	mark := 0
 	for i, s := range am.misspells {
 		wg.Add(1)
@@ -78,7 +73,6 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 		go func(i int, s string) {
 			start := time.Now()
 			rc := method.Match(am.dict, s)
-			rc.Sort()
 			rc.Shrink(limits.Max())
 			rankedCandidates[i] = rc
 			times[i] = int(time.Since(start))
@@ -91,16 +85,6 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 			mark = i
 		}
 	}
-	runtime.ReadMemStats(m)
-	println(m.Alloc / 1000 / 1000)
-	//go func() {
-	//	for {
-	//		runtime.ReadMemStats(m)
-	//		println(m.Alloc/1000/1000)
-	//runtime.GC()
-	//time.Sleep(time.Second * 16)
-	//}
-	//}()
 	wg.Wait()
 	counter.Finish()
 	t = time.Now()

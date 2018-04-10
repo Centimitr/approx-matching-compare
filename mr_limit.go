@@ -1,6 +1,8 @@
 package main
 
-import "sort"
+import (
+	"sort"
+)
 
 var LIMIT_1 = NewApproxMatchMethodLimits(1)
 var LIMIT_2 = NewApproxMatchMethodLimits(2)
