@@ -14,8 +14,8 @@ func main() {
 	println()
 	t := time.Now()
 
-	NewApproxMatchRunner().
-		Load("task.json").
+	am := NewApproxMatchRunner()
+	am.Load("task.json").
 		Run(&DirectMatch{}, LIMIT_1).
 		Run(&NeighbourhoodSearch{K: 1}, LIMIT_1).
 		Run(&NeighbourhoodSearch{K: 2}, LIMIT_2).
