@@ -9,10 +9,11 @@ type ApproxMatchTaskPath struct {
 }
 
 type ApproxMatchTask struct {
-	Path      ApproxMatchTaskPath `json:"path"`
-	Misspells []string            `json:"misspells"`
-	Corrects  []string            `json:"corrects"`
-	Records   []ApproxMatchRecord `json:"records,omitempty"`
+	Path       ApproxMatchTaskPath `json:"path"`
+	Misspells  []string            `json:"misspells"`
+	Corrects   []string            `json:"corrects"`
+	Records    []ApproxMatchRecord `json:"records,omitempty"`
+	ProcessNum int                 `json:"processNum,omitempty"`
 }
 
 func (t *ApproxMatchTask) Stat(corrects []string) {

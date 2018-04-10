@@ -10,7 +10,6 @@ import (
 type ApproxMatchMethod interface {
 	Match(Dict, string) RankedStrings
 	Param() string
-	Limits() []int
 }
 
 type ApproxMatchRunner struct {
@@ -31,6 +30,9 @@ func (am *ApproxMatchRunner) Load(filename string) {
 	}
 	am.dict = NewDictFromFile(am.task.Path.Dict)
 	am.task.Misspells = ReadFileAsLines(am.task.Path.Misspells)
+	if am.task.ProcessNum != 0 {
+		am.task.Misspells = am.task.Misspells[:am.task.ProcessNum]
+	}
 	am.task.Corrects = ReadFileAsLines(am.task.Path.Corrects)
 	am.misspells = am.task.Misspells
 	am.corrects = am.task.Corrects
@@ -43,7 +45,7 @@ func (am *ApproxMatchRunner) Save(filename string) {
 	}
 }
 
-func (am *ApproxMatchRunner) Run(method ApproxMatchMethod) {
+func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMethodLimits) {
 	startTime := time.Now()
 	methodName := GetStructName(method)
 	rankedCandidates := make([]RankedStrings, len(am.misspells))
@@ -66,7 +68,7 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod) {
 	}
 	wg.Wait()
 	counter.Finish()
-	for _, limit := range method.Limits() {
+	for _, limit := range limits.Limits() {
 		r := ApproxMatchRecord{
 			Method: methodName,
 			Candidates: func() [][]string {

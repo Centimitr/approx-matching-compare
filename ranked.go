@@ -2,6 +2,7 @@ package main
 
 import (
 	"sort"
+	"strconv"
 )
 
 type RankedString struct {
@@ -18,6 +19,15 @@ func NewRankedStrings(cap int) RankedStrings {
 type RankedStrings struct {
 	List   []RankedString
 	Sorted bool
+}
+
+func (r *RankedStrings) Has(s string) bool {
+	for _, rs := range r.List {
+		if rs.S == s {
+			return true
+		}
+	}
+	return false
 }
 
 func (r *RankedStrings) Put(s string, rank int) {
@@ -38,6 +48,7 @@ func (r *RankedStrings) Top(limit int) []string {
 	//for _, v := range r.List {
 	//	fmt.Printf("STR: %s - %d\n", v.S, v.R)
 	//}
+	print("LIMIT: " + strconv.Itoa(limit))
 	result := make([]string, 0)
 	n := 0
 	var previous int
@@ -49,6 +60,7 @@ func (r *RankedStrings) Top(limit int) []string {
 			return result
 		}
 		result = append(result, rs.S)
+		previous = rs.R
 	}
 	//fmt.Println(len(result), result[0])
 	return result

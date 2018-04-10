@@ -1,9 +1,16 @@
 package main
 
-import "strings"
+import (
+	"strings"
+	"fmt"
+)
 
 type NeighbourhoodSearch struct {
 	K int
+}
+
+func (ns NeighbourhoodSearch) Param() string {
+	return fmt.Sprintf("K=%d", ns.K)
 }
 
 var alphabet = strings.Split("abcdefghijklmnopqrstuvwxyz", "")
@@ -43,21 +50,27 @@ var search = func(d Dict, s string, alphabet []string) (candidates []string, nex
 	}
 	return
 }
-//
-//func (ns NeighbourhoodSearch) Match(d Dict, s string) RankedStrings {
-//	elms := []string{s}
-//	for i := 0; i < ns.K; i++ {
-//		var newCandidates []string
-//		for _, e := range elms {
-//			cs, next := search(d, e, alphabet)
-//
-//			//if r, cs := search(d, c, alphabet); r != "" {
-//			//	return r
-//			//} else {
-//			//	newCandidates = append(cs)
-//			//}
-//		}
-//		candidates = newCandidates
-//	}
-//	return ""
-//}
+
+func (ns NeighbourhoodSearch) Match(d Dict, s string) (rs RankedStrings) {
+	seeds := []string{s}
+	for i := 0; i < ns.K; i++ {
+		var nextSeeds []string
+		for _, seed := range seeds {
+			cs, next := search(d, seed, alphabet)
+			for _, c := range cs {
+				if !rs.Has(c) {
+					rs.Put(c, i+1)
+				}
+			}
+			for _, s := range next {
+				nextSeeds = append(nextSeeds, s)
+			}
+		}
+		seeds = nextSeeds
+	}
+	rs.Sort()
+	for _, r := range rs.List {
+		println(r.S, r.R)
+	}
+	return
+}

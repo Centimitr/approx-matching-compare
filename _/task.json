@@ -1,4 +1,5 @@
 {
+  "processNum": 1,
   "path": {
     "dictionary": "dictionary.txt",
     "misspells": "misspell.txt",

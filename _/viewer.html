@@ -60,7 +60,7 @@
         <tr ng-repeat="row in rows">
             <td>{{row.misspell}}</td>
             <td>{{row.correct}}</td>
-            <td style="text-align: center" ng-repeat="candidates in row.candidatesOfMethods">
+            <td style="text-align: center" ng-repeat="candidates in row.candidatesOfMethods track by $index">
             {{candidates}}
             </td>
         </tr>
