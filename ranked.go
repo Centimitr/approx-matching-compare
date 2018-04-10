@@ -2,7 +2,6 @@ package main
 
 import (
 	"sort"
-	"strconv"
 )
 
 type RankedString struct {
@@ -42,7 +41,6 @@ func (r *RankedStrings) Sort() {
 }
 func (r *RankedStrings) Shrink(limit int) {
 	i := r.TopIndex(limit)
-	println("Index: " + strconv.Itoa(i))
 	//for i, v := range r.List {
 	//	if v.R <= 3 {
 	//		println(strconv.Itoa(i) + ") " + v.S + " " + strconv.Itoa(v.R))
@@ -74,11 +72,7 @@ func (r *RankedStrings) TopIndex(limit int) int {
 }
 
 func (r *RankedStrings) Top(limit int) []string {
-	println()
-	println("Limit: " + strconv.Itoa(limit))
 	i := r.TopIndex(limit)
-	println("Index: " + strconv.Itoa(i))
-	println()
 	result := make([]string, 0, i)
 	for li, rs := range r.List {
 		if li < i {
