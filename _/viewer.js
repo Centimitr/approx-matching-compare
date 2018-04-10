@@ -19,7 +19,7 @@ angular.module("app", [])
                 correct: task.corrects[i],
                 canCorrect: task.dictionary.includes(task.corrects[i]),
                 candidatesOfMethods: task.records.map(r => {
-                    const cs = r.Candidates[i];
+                    const cs = r.Candidates[i] || [];
                     return {
                         candidates: cs.join(", "),
                         len: cs.length,
@@ -32,7 +32,7 @@ angular.module("app", [])
         }
 
         // stats
-        $scope.times = task.records.map(r => r.Times.reduce((a, b) => a + b, 0));
+        // $scope.times = task.records.map(r => r.Times.reduce((a, b) => a + b, 0));
         $scope.hitRates = [
             (() => {
                 const total = rows.map(row => row.canCorrect).filter(v => v).length;
@@ -45,5 +45,6 @@ angular.module("app", [])
         }));
 
         $scope.rows = rows;
+        $scope.notLoading = true;
         $scope.$apply();
     });

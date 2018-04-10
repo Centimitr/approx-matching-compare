@@ -1,8 +1,11 @@
 package main
 
-import "strings"
-
 type GlobalEditDistance struct {
+	dictChars map[string][]rune
+}
+
+func (ged *GlobalEditDistance) Name() string {
+	return "GED"
 }
 
 var min = func(a, b, c int) int {
@@ -15,9 +18,7 @@ var min = func(a, b, c int) int {
 	}
 	return m
 }
-var editd = func(s, t string) int {
-	ss := strings.Split(s, "")
-	ts := strings.Split(t, "")
+var editd = func(ss, ts []rune) int {
 	var leftCol []int
 	for x := 0; x <= len(ts); x++ {
 		col := make([]int, len(ss)+1)
@@ -39,8 +40,20 @@ var editd = func(s, t string) int {
 	return leftCol[len(ss)]
 }
 
-func (ged GlobalEditDistance) Match(d Dict, s string) string {
-	return minDistance(d.List, func(t string) int {
-		return editd(s, t)
-	})
+func (ged *GlobalEditDistance) Prepare(runner *ApproxMatchRunner) {
+	ged.dictChars = make(map[string][]rune, len(runner.dict.List))
+	for _, word := range runner.dict.List {
+		ged.dictChars[word] = []rune(word)
+	}
+}
+
+func (ged *GlobalEditDistance) Match(d Dict, s string) RankedStrings {
+	rs := NewRankedStrings(len(ged.dictChars))
+	//schars := strings.Split(s, "")
+	srunes := []rune(s)
+	for word, runes := range ged.dictChars {
+		rs.Put(word, editd(runes, srunes))
+		//fmt.Println(word, runes)
+	}
+	return rs
 }

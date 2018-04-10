@@ -17,6 +17,7 @@
     </style>
 </head>
 <body ng-controller="ViewerController as ctrl">
+<div ng-hide="notLoading">loading...</div>
 <div style="width: 100%; overflow: scroll;">
     <table ng-if="task">
         <thead>
@@ -26,10 +27,12 @@
             <th>canCorrect</th>
             <th ng-repeat="v in headers">{{v}}</th>
         </tr>
+        <!--
         <tr>
-            <th colspan="2"></th>
-            <th ng-repeat="v in times track by $index">{{v | date: "H:mm:ss": "UTC"}}</th>
+            <th colspan="3"></th>
+            <th ng-repeat="v in times track by $index">{{v}}</th>
         </tr>
+        -->
         <tr>
             <th colspan="2">HitRates</th>
             <th ng-repeat="v in hitRates track by $index">{{v}}</th>

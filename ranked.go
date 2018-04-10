@@ -39,26 +39,42 @@ func (r *RankedStrings) Sort() {
 	})
 	r.Sorted = true
 }
+func (r *RankedStrings) Shrink(limit int) {
+	i := r.TopIndex(limit)
+	r.List = r.List[:i]
+}
 
-func (r *RankedStrings) Top(limit int) []string {
+func (r *RankedStrings) TopIndex(limit int) int {
 	if !r.Sorted {
 		r.Sort()
 	}
-	//for _, v := range r.List[:25] {
-	//	fmt.Printf("STR: %s - %d\n", v.S, v.R)
-	//}
-	result := make([]string, 0)
 	n := 0
 	var previous int
-	for _, rs := range r.List {
-		if rs.R != previous {
+	for i, rs := range r.List {
+		if i == 0 || rs.R != previous {
 			n++
 		}
 		if n > limit {
-			return result
+			return n
 		}
-		result = append(result, rs.S)
 		previous = rs.R
+	}
+	return len(r.List)
+}
+
+func (r *RankedStrings) Top(limit int) []string {
+	i := r.TopIndex(limit)
+	//nn := 0
+	//for _, v := range r.List {
+	//	if v.R < 3 {
+	//		nn++
+	//		fmt.Printf("STR: %s - %d\n", v.S, v.R)
+	//	}
+	//}
+	//fmt.Println(nn)
+	result := make([]string, 0, i)
+	for _, rs := range r.List {
+		result = append(result, rs.S)
 	}
 	return result
 }

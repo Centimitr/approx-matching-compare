@@ -5,6 +5,7 @@ import (
 	"time"
 	"sync"
 	"fmt"
+	"runtime"
 )
 
 type ApproxMatchMethod interface {
@@ -56,22 +57,50 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	println("Launch: " + method.Name())
 	counter := NewCounter(len(am.misspells))
 
+	m := &runtime.MemStats{}
+
+	runtime.ReadMemStats(m)
+	println(m.Alloc / 1000 / 1000)
 	t := time.Now()
 	method.Prepare(am)
 	println("Prepare: " + time.Since(t).String())
 
+	runtime.ReadMemStats(m)
+	println(m.Alloc / 1000 / 1000)
 	counter.Start()
 	var wg sync.WaitGroup
+	var stepWg sync.WaitGroup
+	step := 512
+	mark := 0
 	for i, s := range am.misspells {
 		wg.Add(1)
+		stepWg.Add(1)
 		go func(i int, s string) {
 			start := time.Now()
-			rankedCandidates[i] = method.Match(am.dict, s)
+			rc := method.Match(am.dict, s)
+			rc.Sort()
+			rc.Shrink(limits.Max())
+			rankedCandidates[i] = rc
 			times[i] = int(time.Since(start))
 			counter.Add()
 			wg.Done()
+			stepWg.Done()
 		}(i, s)
+		if i-mark > step {
+			stepWg.Wait()
+			mark = i
+		}
 	}
+	runtime.ReadMemStats(m)
+	println(m.Alloc / 1000 / 1000)
+	//go func() {
+	//	for {
+	//		runtime.ReadMemStats(m)
+	//		println(m.Alloc/1000/1000)
+	//runtime.GC()
+	//time.Sleep(time.Second * 16)
+	//}
+	//}()
 	wg.Wait()
 	counter.Finish()
 	t = time.Now()
@@ -80,11 +109,15 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 			Method: methodName,
 			Candidates: func() [][]string {
 				result := make([][]string, len(rankedCandidates))
+				var wg sync.WaitGroup
 				for i, rc := range rankedCandidates {
+					wg.Add(1)
 					go func(i int, rc RankedStrings, limit int) {
 						result[i] = rc.Top(limit)
+						wg.Done()
 					}(i, rc, limit)
 				}
+				wg.Wait()
 				return result
 			}(),
 			Name:      fmt.Sprintf("%s-%d", method.Name(), limit),
@@ -95,6 +128,7 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	}
 	println("Complete: " + time.Since(t).String())
 	println("Total: " + time.Since(startTime).String() + "\n")
+	runtime.GC()
 }
 
 func (am *ApproxMatchRunner) Stat() {
