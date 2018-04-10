@@ -26,7 +26,7 @@ func NewApproxMatchRunner() ApproxMatchRunner {
 	return ApproxMatchRunner{}
 }
 
-func (am *ApproxMatchRunner) Load(filename string) {
+func (am *ApproxMatchRunner) Load(filename string) *ApproxMatchRunner {
 	e := ReadJSON(filename, &am.task)
 	if e != nil {
 		log.Fatal("Read task json failed.")
@@ -40,16 +40,18 @@ func (am *ApproxMatchRunner) Load(filename string) {
 	am.task.Corrects = ReadFileAsLines(am.task.Path.Corrects)
 	am.misspells = am.task.Misspells
 	am.corrects = am.task.Corrects
+	return am
 }
 
-func (am *ApproxMatchRunner) Save(filename string) {
+func (am *ApproxMatchRunner) Save(filename string) *ApproxMatchRunner {
 	e := WriteJSON(filename, am.task)
 	if e != nil {
 		log.Fatal("Write task json failed.")
 	}
+	return am
 }
 
-func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMethodLimits) {
+func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMethodLimits) *ApproxMatchRunner {
 	startTime := time.Now()
 	methodName := GetStructName(method)
 	rankedCandidates := make([]RankedStrings, len(am.misspells))
@@ -113,8 +115,10 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	println("Complete: " + time.Since(t).String())
 	println("Total: " + time.Since(startTime).String() + "\n")
 	runtime.GC()
+	return am
 }
 
-func (am *ApproxMatchRunner) Stat() {
+func (am *ApproxMatchRunner) Stat() *ApproxMatchRunner {
 	am.task.Stat(am.corrects)
+	return am
 }

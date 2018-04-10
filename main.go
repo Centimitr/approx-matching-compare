@@ -8,20 +8,26 @@ import (
 )
 
 func main() {
+	println("COMP90049 - Project 1")
+	println("Student ID: 879849")
+	println("Name: Xiao Shi")
+	println()
 	t := time.Now()
-	am := NewApproxMatchRunner()
-	am.Load("task.json")
-	am.Stat()
-	am.Run(&DirectMatch{}, LIMIT_1)
-	am.Run(&NeighbourhoodSearch{K: 1}, LIMIT_1)
-	am.Run(&NeighbourhoodSearch{K: 2}, LIMIT_2)
-	am.Run(&NGramDistance{N: 2}, LIMIT_1)
-	am.Run(&NGramDistance{N: 3}, LIMIT_1)
-	am.Run(&NGramDistance{N: 4}, LIMIT_1)
-	am.Run(&GlobalEditDistance{}, LIMIT_1_2)
-	am.Run(&Soundex{Cut: 4}, LIMIT_1)
-	am.Run(&Soundex{Cut: 8}, LIMIT_1)
-	am.Save("result.json")
+
+	NewApproxMatchRunner().
+		Load("task.json").
+		Run(&DirectMatch{}, LIMIT_1).
+		Run(&NeighbourhoodSearch{K: 1}, LIMIT_1).
+		Run(&NeighbourhoodSearch{K: 2}, LIMIT_2).
+		Run(&NGramDistance{N: 2}, LIMIT_1).
+		Run(&NGramDistance{N: 3}, LIMIT_1).
+		Run(&NGramDistance{N: 4}, LIMIT_1).
+		Run(&GlobalEditDistance{}, LIMIT_1_2).
+		Run(&Soundex{Cut: 4}, LIMIT_1).
+		Run(&Soundex{Cut: 8}, LIMIT_1).
+		Stat().
+		Save("result.json")
+
 	since := time.Since(t)
 	println("TIME: " + since.String())
 
