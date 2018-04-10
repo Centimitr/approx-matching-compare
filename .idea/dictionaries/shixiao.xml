@@ -4,18 +4,24 @@
       <w>abcdefghijklmnopqrstuvwxyz</w>
       <w>agrams</w>
       <w>alen</w>
+      <w>bcount</w>
       <w>bfpv</w>
       <w>bgrams</w>
       <w>cgjkqsxz</w>
       <w>cors</w>
       <w>devbycm</w>
       <w>editd</w>
+      <w>gramsm</w>
       <w>ngramd</w>
       <w>ngrams</w>
       <w>ngramsd</w>
+      <w>ngramsds</w>
       <w>sgrams</w>
+      <w>sgramsm</w>
       <w>slen</w>
       <w>soundex</w>
+      <w>wngrams</w>
+      <w>wngramsm</w>
     </words>
   </dictionary>
 </component>

@@ -10,6 +10,7 @@ type ApproxMatchTaskPath struct {
 
 type ApproxMatchTask struct {
 	Path       ApproxMatchTaskPath `json:"path"`
+	Dict       []string            `json:"dictionary"`
 	Misspells  []string            `json:"misspells"`
 	Corrects   []string            `json:"corrects"`
 	Records    []ApproxMatchRecord `json:"records,omitempty"`

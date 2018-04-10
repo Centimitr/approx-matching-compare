@@ -9,8 +9,11 @@ type NeighbourhoodSearch struct {
 	K int
 }
 
-func (ns NeighbourhoodSearch) Param() string {
-	return fmt.Sprintf("K=%d", ns.K)
+func (ns *NeighbourhoodSearch) Prepare(runner *ApproxMatchRunner) {
+}
+
+func (ns *NeighbourhoodSearch) Name() string {
+	return fmt.Sprintf("Neighbour(K=%d)", ns.K)
 }
 
 var alphabet = strings.Split("abcdefghijklmnopqrstuvwxyz", "")
@@ -51,7 +54,7 @@ var search = func(d Dict, s string, alphabet []string) (candidates []string, nex
 	return
 }
 
-func (ns NeighbourhoodSearch) Match(d Dict, s string) (rs RankedStrings) {
+func (ns *NeighbourhoodSearch) Match(d Dict, s string) (rs RankedStrings) {
 	seeds := []string{s}
 	for i := 0; i < ns.K; i++ {
 		var nextSeeds []string
@@ -69,8 +72,8 @@ func (ns NeighbourhoodSearch) Match(d Dict, s string) (rs RankedStrings) {
 		seeds = nextSeeds
 	}
 	rs.Sort()
-	for _, r := range rs.List {
-		println(r.S, r.R)
-	}
+	//for _, r := range rs.List {
+	//	println(r.S, r.R)
+	//}
 	return
 }

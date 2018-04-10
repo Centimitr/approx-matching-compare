@@ -8,8 +8,9 @@ import (
 )
 
 type ApproxMatchMethod interface {
+	Prepare(*ApproxMatchRunner)
 	Match(Dict, string) RankedStrings
-	Param() string
+	Name() string
 }
 
 type ApproxMatchRunner struct {
@@ -29,6 +30,7 @@ func (am *ApproxMatchRunner) Load(filename string) {
 		log.Fatal("Read task json failed.")
 	}
 	am.dict = NewDictFromFile(am.task.Path.Dict)
+	am.task.Dict = am.dict.List
 	am.task.Misspells = ReadFileAsLines(am.task.Path.Misspells)
 	if am.task.ProcessNum != 0 {
 		am.task.Misspells = am.task.Misspells[:am.task.ProcessNum]
@@ -51,10 +53,11 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 	rankedCandidates := make([]RankedStrings, len(am.misspells))
 	times := make([]int, len(am.misspells))
 
-	println("Start: " + methodName + " " + method.Param())
+	println("Start: " + method.Name())
 	counter := NewCounter(len(am.misspells))
 
 	counter.Start()
+	method.Prepare(am)
 	var wg sync.WaitGroup
 	for i, s := range am.misspells {
 		wg.Add(1)
@@ -78,7 +81,7 @@ func (am *ApproxMatchRunner) Run(method ApproxMatchMethod, limits ApproxMatchMet
 				}
 				return result
 			}(),
-			Parameter: fmt.Sprintf("(%s)-%d", method.Param(), limit),
+			Name:      fmt.Sprintf("%s-%d", method.Name(), limit),
 			StartTime: int(startTime.UnixNano()),
 			Times:     times,
 		}

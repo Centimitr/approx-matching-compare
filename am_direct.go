@@ -3,15 +3,14 @@ package main
 type DirectMatch struct {
 }
 
-func (dm DirectMatch) Param() string {
-	return ""
+func (dm *DirectMatch) Prepare(runner *ApproxMatchRunner) {
 }
 
-func (dm DirectMatch) Limits() []int {
-	return []int{1}
+func (dm *DirectMatch) Name() string {
+	return "DirectMatch"
 }
 
-func (dm DirectMatch) Match(d Dict, s string) RankedStrings {
+func (dm *DirectMatch) Match(d Dict, s string) RankedStrings {
 	rs := NewRankedStrings(0)
 	if d.Has(s) {
 		rs.Put(s, 0)

@@ -2,7 +2,7 @@ package main
 
 type ApproxMatchRecord struct {
 	Method     string
-	Parameter  string
+	Name       string
 	StartTime  int
 	Candidates [][]string
 	Times      []int

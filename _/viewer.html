@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <title>879849 - COMP90049</title>
     <script src="angular.js"></script>
+    <script src="viewer.js"></script>
     <style>
         th {
             text-align: left;
             font-size: 18px;
             line-height: 28px;
-            padding-bottom: 12px;
+            padding: 0 18px 8px 0;
         }
 
         thead tr:nth-child(1) th {
@@ -20,39 +21,15 @@
             z-index: 10;
         }
     </style>
-    <script>
-        angular.module("app", [])
-                .controller('ViewerController', async function ($scope) {
-                    const res = await fetch("http://localhost:3000/result.json", {mode: 'no-cors'});
-                    const task = await res.json();
-                    console.log(task.records);
-                    $scope.task = task;
-
-                    const headers = ["mispell", "correct"].concat(task.records.map(r => r.Method + r.Parameter));
-
-
-                    const rows = []
-                    const len = task.misspells.length;
-                    for (let i = 0; i < len; i++) {
-                        const row = {
-                            misspell: task.misspells[i],
-                            correct: task.corrects[i],
-                            candidatesOfMethods: task.records.map(r => r.Candidates[i].join(", ")),
-                            timesOfMethods: task.records.map(r => r.Times[i])
-                        }
-                        rows.push(row)
-                    }
-                    $scope.headers = headers;
-                    $scope.rows = rows;
-                    $scope.$apply();
-                })
-    </script>
 </head>
 <body ng-controller="ViewerController as ctrl">
 <div>
     <table ng-if="task">
         <thead>
         <tr>
+            <th>misspell</th>
+            <th>correct</th>
+            <th>canCorrect</th>
             <th ng-repeat="text in headers">{{text}}</th>
         </tr>
         </thead>
@@ -60,8 +37,12 @@
         <tr ng-repeat="row in rows">
             <td>{{row.misspell}}</td>
             <td>{{row.correct}}</td>
-            <td style="text-align: center" ng-repeat="candidates in row.candidatesOfMethods track by $index">
-            {{candidates}}
+            <td><span ng-show="row.canCorrect">Hit</span></td>
+            <td style="text-align: left; padding-bottom: 8px" ng-repeat="v in row.candidatesOfMethods track by $index">
+                <div ng-show="v.len">({{v.len}} items<span ng-show="v.hit">, Hit</span>)</div>
+                <div style="max-height: 20px;max-width: 220px; overflow: hidden; text-overflow: ellipsis">
+                {{v.candidates}}
+                </div>
             </td>
         </tr>
         </tbody>
