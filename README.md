@@ -1,6 +1,7 @@
 # COMP90049 - Project 1
 
 Student ID: 879849
+
 Name: Xiao Shi
 
 ## How to run
@@ -97,3 +98,5 @@ Total: 1.824904882s
 
 TIME: 3m23.449191643s
 ```
+
+Wed, 11 Apr 2018
