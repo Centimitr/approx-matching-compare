@@ -15,6 +15,10 @@ This program is built with the Go programming language and the frontend use Angu
 
 This program uses `sort.Slice()`, so it requires Go 1.8+. The frontend uses `async` and `fetch`, therefore please ensure you are using a modern browser, or you will not see the analyse result.
 
+## Dependency
+
+This program is completely written by me, only the Go Standard Library is used. So the code does not have any dependency.
+
 ## Performance
 
 Developed and tested under macOS 10.13.4. The machine used is 2.6GHz Intel Core i7 (4 cores, 8 threads) with 16GB memory.

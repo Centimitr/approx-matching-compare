@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage{colacl}
+\sloppy
+
+
+
+\title{The practicality of approximate match methods
+ }
+\author
+{Anonymous}
+
+
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Spellings are not always correct, so the users need suggestions. Only the users know what the correct words they want should be and what computer systems can do is to guess the possible candidates. An appropriate start for this problem is to make the assumption that a wrong spelling might be similar in some way to the correct one. This report analyses several methods which can be used to test the similarity between two words. Using these methods, a list of candidates can be produced from a dictionary. Evaluations of these methods of their effectiveness and efficiency are explained to measure their practical value to use to recommend corrections.
+
+\section{Dataset}
+
+The dataset includes a list of misspelled words and a list of its corresponding expected corrections with 719 items. A dictionary from UrbanDictionary[] which has 393954 items is provided to help the correction process. This is a real-world dataset, so the expected corrections are not guaranteed. A test directly match the items in misspelled list and corrected list with the dictionary has been done to check how many cases in the misspelled list are possibly solvable using the dictionary. 
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c|c|c| }
+      \hline
+      Dataset & Measure & Value\\
+      \hline\hline
+      corrections & accuracy & 594/716 (82.96\%)\\
+      misspells & recall & 6/716 (0.84\%)\\
+      misspells & precision & 6/175 (3.43\%)\\
+      \hline
+\end{tabular}
+\caption{Direct matching of the dataset}\label{table1}
+ \end{center}
+\end{table}
+
+From the table, it can be seen that the accuracy of the corrections is 594/716, which means the 122 correct spellings do not exist in the dictionary. For these cases, correction suggestions from the dictionary can never success. 
+
+There is also another assumption that if a word in the misspelled list exists in the dictionary, it is not misspelled. It is because the dictionary cannot produce a better match than a perfect match and providing corrections for a probably right word seems to be strange. However, from the test result above, 175 words are considered right spellings while only 3.43\% of them are correct indeed. This assumption can solve 0.84\% of the problem and other 23.6\% of the problem are wrong speculations.
+
+More data sources such as frequency statistics are meaningful. These data can provide a wider cover of the solutions and can support decision makings when the system do not know whether a word is misspelled or not. 
+
+\section{Methods Overview}
+
+\subsection{Neighbourhood Search}
+The neighbourhood search method is to enumerate possible variants from a given spelling and then verify them. The variants are generated with one or more modification. In this report, the method adopts insertion, deletion and replacement. More times of modification will produce much larger candidate sets and its recall might be improved. K is the times of modification.
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c| }
+      \hline
+      K & 1 & 2 \\
+      \hline
+      Positives & 6642 & 143508\\
+      Avg Positives & 9 & 200\\
+      True Positives & 291 & 507\\
+      Recall & 40.64\% & 70.81\%\\
+      Precision & 4.38\% & 0.35\%\\
+      F1 Score & 0.079 & 0.007\\
+      Time/ms & 25.12& 7658.25\\
+      \hline
+\end{tabular}
+\caption{Neighbourhood search with different K (times of modification)}\label{table2}
+ \end{center}
+\end{table}
+
+From Table~\ref{table2}, when doing twice modifications, the method can cover 174.22\% corrections. However it costs 30485.66\% more time and gets only 7.99\% precision. It produces much more candidates, and when K=1, users can get 9 candidates in average which has been enough. As the K increases, this problem will be more obvious. Therefore, K=1 is appropriate for this method. 
+
+\subsection{N-Gram Distance}
+
+The n-gram distance method focuses more on evaluating whether words have similar combinations of components. Here the parameter N in the test represents the n of the method.
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c|c| }
+      \hline
+      N & 2 & 3 & 4\\
+      \hline
+      Positives & 1469 & 1528 & 8095\\
+      Avg Positives & 2 & 2 & 11\\
+      True Positives & 149 & 97 &59\\
+      Recall & 20.81\% & 13.55\% & 8.24\%\\
+      Precision & 10.14\% & 6.35\% & 0.73\%\\
+      F1 Score & 0.136 & 0.086 & 0.013\\
+      Time/s & 42.00 & 37.93 & 35.14\\
+      \hline
+\end{tabular}
+\caption{N-gram distance ranking with different N}\label{table3}
+ \end{center}
+\end{table}
+
+When N=2 or N=3, this method shows a good result. They all produce stable numbers of candidates and precisions are acceptable. For this dataset, N=2 turns to be the best choice and generally it is better then N=3. N=4 fails in most cases as the n-gram method flavours shorter words when it is difficult to find common components. Many words with two or three characters or even the alphabet exists in the dictionary, so they have more chances to be matched. 
+
+\subsection{Global Edit Distance}
+
+The global edit distance is another method calculates similarity using a distance measure. It follows a similar idea with the neighbourhood search method, which is to test how to modify the spelling to get the correct one, but it is likely to run in that method's reverse path. For this method, the test apply two filters to get the candidates with highest mark, and the candidates with highest or second highest mark.
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c| }
+      \hline
+      Mark & Highest & with 2\textsuperscript{nd} Highest \\
+      \hline
+      Positives & 5566 & 125113\\
+      Avg Positives & 8 & 175\\
+      True Positives & 258 & 457\\
+      Recall & 36.03\% & 63.83\%\\
+      Precision & 4.64\% & 0.37\%\\
+      F1 Score & 0.082 & 0.007\\
+      Time/s & 76.25 & 76.25\\
+      \hline
+\end{tabular}
+\caption{Neighbourhood search with different K (times of modification)}\label{table2}
+ \end{center}
+\end{table}
+
+
+% \footnote{Footnote text} 
+%\newcite{Spa72}, \newcite{Kay86} and \newcite{MosWal64}.
+%(see Table~\ref{table1}).
+
+\section{Evaluation}
+
+
+\section{Application}
+
+
+\section{Conclusions}
+
+
+
+\bibliographystyle{acl}
+\bibliography{sample}
+
+\end{document}

@@ -34,8 +34,18 @@
         </tr>
         -->
         <tr>
-            <th colspan="2">HitRates</th>
-            <th ng-repeat="v in hitRates track by $index">{{v}}</th>
+            <th colspan="2">recall</th>
+            <th ng-repeat="v in recalls track by $index">{{v[0]}}</th>
+        </tr>
+        <tr>
+            <th colspan="2">precision</th>
+            <th></th>
+            <th ng-repeat="v in precisions track by $index">{{v[0]}}</th>
+        </tr>
+        <tr>
+            <th colspan="2">F1 score</th>
+            <th></th>
+            <th ng-repeat="v in f1s track by $index">{{v}}</th>
         </tr>
         </thead>
         <tbody>

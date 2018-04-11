@@ -33,17 +33,30 @@ angular.module("app", [])
 
         // stats
         // $scope.times = task.records.map(r => r.Times.reduce((a, b) => a + b, 0));
-        $scope.hitRates = [
+        const recalls = $scope.recalls = [
             (() => {
                 const total = rows.map(row => row.canCorrect).filter(v => v).length;
-                return `${total}/${rows.length} - ${Math.round(total / rows.length * 10000) / 100}%`
+                return [`${total}/${rows.length} - ${Math.round(total / rows.length * 10000) / 100}%`, 0]
             })()
 
         ].concat(task.records.map((r, i) => {
-            const total = rows.map(row => row.candidatesOfMethods[i].hit).filter(b => b).length;
-            return `${total}/${rows.length} - ${Math.round(total / rows.length * 10000) / 100}%`
+            const hits = rows.map(row => row.candidatesOfMethods[i].hit).filter(b => b).length;
+            const recall = hits / rows.length;
+            return [`${hits}/${rows.length} - ${Math.round(recall * 10000) / 100}%`, recall]
         }));
 
+        const precisions = $scope.precisions = task.records.map((r, i) => {
+            const hits = rows.map(row => row.candidatesOfMethods[i].hit).filter(b => b).length;
+            const predictions = rows.map(row => row.candidatesOfMethods[i].len).reduce((a, b) => a + b, 0);
+            const precision = hits / predictions;
+            return [`${hits}/${predictions} - ${Math.round(precision * 10000) / 100}%`, precision]
+        });
+
+        const f1s = $scope.f1s = task.records.map((r, i) => {
+            const recall = recalls[i + 1][1];
+            const precision = precisions[i][1];
+            return 2 * (precision * recall) / (precision + recall);
+        });
         $scope.rows = rows;
         $scope.notLoading = true;
         $scope.$apply();
