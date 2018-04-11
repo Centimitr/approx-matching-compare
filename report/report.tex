@@ -1,5 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{colacl}
+\usepackage{tablefootnote}
+\usepackage{amssymb}
 \sloppy
 
 
@@ -8,8 +10,6 @@
  }
 \author
 {Anonymous}
-
-
 
 \begin{document}
 \maketitle
@@ -20,7 +20,7 @@ Spellings are not always correct, so the users need suggestions. Only the users 
 
 \section{Dataset}
 
-The dataset includes a list of misspelled words and a list of its corresponding expected corrections with 719 items. A dictionary from UrbanDictionary[] which has 393954 items is provided to help the correction process. This is a real-world dataset, so the expected corrections are not guaranteed. A test directly match the items in misspelled list and corrected list with the dictionary has been done to check how many cases in the misspelled list are possibly solvable using the dictionary. 
+The dataset includes a list of misspelled words and a list of its corresponding expected corrections with 719 items. A dictionary from UrbanDictionary\footnote{http://urbandictionary.com} which has 393954 items is provided to help the correction process. This is a real-world dataset, so the expected corrections are not guaranteed. A test directly match the items in misspelled list and corrected list with the dictionary has been done to check how many cases in the misspelled list are possibly solvable using the dictionary. 
 
 \begin{table}[h]
  \begin{center}
@@ -96,7 +96,7 @@ When N=2 or N=3, this method shows a good result. They all produce stable number
 
 \subsection{Global Edit Distance}
 
-The global edit distance is another method calculates similarity using a distance measure. It follows a similar idea with the neighbourhood search method, which is to test how to modify the spelling to get the correct one, but it is likely to run in that method's reverse path. For this method, the test apply two filters to get the candidates with highest mark, and the candidates with highest or second highest mark.
+The global edit distance is another method calculates similarity using a distance measure. It follows a similar idea with the neighbourhood search method, which is to test how to modify the spelling to get the correct one, but it is likely to run in that method's reverse path. For this method, the test applies two filters to get the candidates with highest mark, and the candidates with highest or second highest mark.
 
 \begin{table}[h]
  \begin{center}
@@ -113,17 +113,87 @@ The global edit distance is another method calculates similarity using a distanc
       Time/s & 76.25 & 76.25\\
       \hline
 \end{tabular}
-\caption{Neighbourhood search with different K (times of modification)}\label{table2}
+\caption{Global edit distance method with top candidates}\label{table4}
  \end{center}
 \end{table}
 
+With the result, the candidates with highest mark has a higher F1 score. It is similar to former methods that the second options are always much more than the best matching candidates, but these candidates cannot provide a same-order growth of precision. In this case, the precision when accepting candidates with second highest mark drops from 4.64\% to 0.37\%, which is a bad trade-off. In addition, the method responds all correction with the filtered highest-mark candidates, so this level of candidates filter is enough for practice.
 
 % \footnote{Footnote text} 
 %\newcite{Spa72}, \newcite{Kay86} and \newcite{MosWal64}.
 %(see Table~\ref{table1}).
+% \checkmark
 
 \section{Evaluation}
+As explained in the former section, the statistics below will compare methods with their preferred parameters.
+ 
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c|c| }
+      \hline
+      Method & NS(K=1)\tablefootnote{Neighbourhood search method with 1 modification}  & NG(N=2)\tablefootnote{N-gram distance method with 2-gram} & GED-1\tablefootnote{Global edit distance method with highest mark candidates}  \\
+      \hline
+      Avg Positives & 9 & 2 & 8\\
+      Responds & 652 & 716 & 716\\
+      Recall & 40.64\% & 13.55\% & 36.03\%\\
+      Precision & 4.38\% & 10.14\% & 4.64\%\\
+      F1 Score & 0.079 & 0.136 & 0.082\\
+      Time/s & 0.03 & 42.01 & 76.26\\
+      Avg Time/ms & 0.04 & 58.67 & 106.51\\
+      \hline
+\end{tabular}
+\caption{Comparison of matching methods}\label{table5}
+ \end{center}
+\end{table}
 
+The neighbourhood search method is the fastest among the three methods. Then, the n-gram method has the best F1-score, which means it is generally the most possible method which can provide a satisfying output. The result of the global edit distance method looks similar to the neighbourhood search method, but it is the slowest. But this data does not mean the neighbourhood search method or the n-gram distance method is the best, as the results varies for different spellings. It responds 652 spellings and for the rest 64 spellings it cannot provide any option. The other two methods respond all the correction requests.
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c|c| }
+      \hline
+      Method & NS(K=1) & NG(N=1) & GED-1\\
+      \hline
+      Give & \multicolumn{3}{|c|}{adn}\\
+      Want & \multicolumn{3}{|c|}{and}\\
+      Possible\tablefootnote{Possible means the correct spelling exists in the dictionary} & \multicolumn{3}{|c|}{true}\\
+      \hline
+      PosNum\tablefootnote{PosNum is the number of the positives or candidates} & 28 & 1 & 1\\
+      Positives & pdf,dn & addn & addn\\
+       & abn... & & \\
+      Recall & 0 & 0 & 0\\
+      Precision & 0 & 0 & 0\\
+      \hline
+      \hline
+\end{tabular}
+\caption{Comparison of matching methods}\label{table6}
+ \end{center}
+\end{table}
+
+In this case, all the three methods fail to get the correct spelling and they output 28, 1 and 1 suggestions separately. When all the methods cannot get the right answer, the less wrong options given is better. So the neighbourhood search method is a bad choice for this correction.  
+
+\begin{table}[h]
+ \begin{center}
+\begin{tabular}{ |c||c|c|c| }
+      \hline
+      Method & NS(K=1) & NG(N=1) & GED-1\\
+      \hline
+      Give & \multicolumn{3}{|c|}{phsycotic}\\
+      Want & \multicolumn{3}{|c|}{psychotic}\\
+      Possible & \multicolumn{3}{|c|}{true}\\
+      \hline
+      PosNum & 0 & 1 & 1\\
+      Positives &  & photic & psychotic \\
+      Recall & 0 & 0 & 100\%\\
+      Precision & 0 & 0 & 100\%\\
+      \hline
+      \hline
+\end{tabular}
+\caption{Comparison of matching methods}\label{table7}
+ \end{center}
+\end{table}
+
+For the spelling phsycotic, GED-1 is the only one gives the right answer. This spelling has two wrong characters with its corresponding correct spelling. So the neighbourhood search allowing one modification does not work. Also, the two wrong characters distributed in the different offsets of the word, therefore the n-gram method cannot give good marks to the right matching as they do not share enough number of components. This example tells that although the global edit distance is the slowest one. It can sometimes the right answer for specific tasks. 
 
 \section{Application}
 

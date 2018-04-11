@@ -4,8 +4,12 @@ angular.module("app", [])
         const task = await res.json();
         document.t = task;
         console.log(task);
-        // console.log(task.records);
+        console.log(task.records);
+        task.records = task.records.filter(r => ['Neighbour(K=1)-1', 'nGram(N=2)-1', 'GED-1'].includes(r.Name));
         $scope.task = task;
+
+        const nums = task.records.map(r => r.Candidates.map(css => css.length > 0 ? 0 : 1).reduce((a, b) => a + b, 0));
+
 
         // headers
         $scope.headers = task.records.map(r => r.Name);
