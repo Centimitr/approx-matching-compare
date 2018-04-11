@@ -37,7 +37,7 @@ The dataset includes a list of misspelled words and a list of its corresponding 
  \end{center}
 \end{table}
 
-From the table, it can be seen that the accuracy of the corrections is 594/716, which means the 122 correct spellings do not exist in the dictionary. For these cases, correction suggestions from the dictionary can never success. 
+From the table, it can be seen that the accuracy of the corrections is 594/716, which means the 122 correct spellings do not exist in the dictionary. For these cases, correction suggestions from the dictionary can never succeed. 
 
 There is also another assumption that if a word in the misspelled list exists in the dictionary, it is not misspelled. It is because the dictionary cannot produce a better match than a perfect match and providing corrections for a probably right word seems to be strange. However, from the test result above, 175 words are considered right spellings while only 3.43\% of them are correct indeed. This assumption can solve 0.84\% of the problem and other 23.6\% of the problem are wrong speculations.
 
@@ -67,7 +67,7 @@ The neighbourhood search method is to enumerate possible variants from a given s
  \end{center}
 \end{table}
 
-From Table~\ref{table2}, when doing twice modifications, the method can cover 174.22\% corrections. However it costs 30485.66\% more time and gets only 7.99\% precision. It produces much more candidates, and when K=1, users can get 9 candidates in average which has been enough. As the K increases, this problem will be more obvious. Therefore, K=1 is appropriate for this method. 
+From Table~\ref{table2}, when doing twice modifications, the method can cover 174.22\% corrections. However, it costs 30485.66\% more time and gets only 7.99\% precision. It produces much more candidates, and when K=1, users can get 9 candidates on average which has been enough. As the K increases, this problem will be more obvious. Therefore, K=1 is appropriate for this method. 
 
 \subsection{N-Gram Distance}
 
@@ -92,7 +92,7 @@ The n-gram distance method focuses more on evaluating whether words have similar
  \end{center}
 \end{table}
 
-When N=2 or N=3, this method shows a good result. They all produce stable numbers of candidates and precisions are acceptable. For this dataset, N=2 turns to be the best choice and generally it is better then N=3. N=4 fails in most cases as the n-gram method flavours shorter words when it is difficult to find common components. Many words with two or three characters or even the alphabet exists in the dictionary, so they have more chances to be matched. 
+When N=2 or N=3, this method shows a good result. They all produce stable numbers of candidates and precisions are acceptable. For this dataset, N=2 turns to be the best choice and generally it is better then N=3. N=4 fails in most cases as the n-gram method flavours shorter words when it is difficult to find common components. Many words with two or three characters or even the alphabet exist in the dictionary, so they have more chances to be matched. 
 
 \subsection{Global Edit Distance}
 
@@ -117,12 +117,7 @@ The global edit distance is another method calculates similarity using a distanc
  \end{center}
 \end{table}
 
-With the result, the candidates with highest mark has a higher F1 score. It is similar to former methods that the second options are always much more than the best matching candidates, but these candidates cannot provide a same-order growth of precision. In this case, the precision when accepting candidates with second highest mark drops from 4.64\% to 0.37\%, which is a bad trade-off. In addition, the method responds all correction with the filtered highest-mark candidates, so this level of candidates filter is enough for practice.
-
-% \footnote{Footnote text} 
-%\newcite{Spa72}, \newcite{Kay86} and \newcite{MosWal64}.
-%(see Table~\ref{table1}).
-% \checkmark
+With the result, the candidates with the highest mark have a higher F1 score. It is similar to former methods that the second options are always much more than the best matching candidates, but these candidates cannot provide a same-order growth of precision. In this case, the precision when accepting candidates with second highest mark drops from 4.64\% to 0.37\%, which is a bad trade-off. In addition, the method responds all correction with the filtered highest-mark candidates, so this level of candidates filter is enough for practice.
 
 \section{Evaluation}
 As explained in the former section, the statistics below will compare methods with their preferred parameters.
@@ -146,7 +141,7 @@ As explained in the former section, the statistics below will compare methods wi
  \end{center}
 \end{table}
 
-The neighbourhood search method is the fastest among the three methods. Then, the n-gram method has the best F1-score, which means it is generally the most possible method which can provide a satisfying output. The result of the global edit distance method looks similar to the neighbourhood search method, but it is the slowest. But this data does not mean the neighbourhood search method or the n-gram distance method is the best, as the results varies for different spellings. It responds 652 spellings and for the rest 64 spellings it cannot provide any option. The other two methods respond all the correction requests.
+The neighbourhood search method is the fastest among the three methods. Then, the n-gram method has the best F1-score, which means it is generally the possible method which can provide a satisfying output. The result of the global edit distance method looks similar to the neighbourhood search method, but it is the slowest. But this data does not mean the neighbourhood search method or the n-gram distance method is the best, as the results vary for different spellings. It responds 652 spellings and for the rest 64 spellings it cannot provide any option. The other two methods respond all the correction requests.
 
 \begin{table}[h]
  \begin{center}
@@ -195,14 +190,33 @@ In this case, all the three methods fail to get the correct spelling and they ou
 
 For the spelling phsycotic, GED-1 is the only one gives the right answer. This spelling has two wrong characters with its corresponding correct spelling. So the neighbourhood search allowing one modification does not work. Also, the two wrong characters distributed in the different offsets of the word, therefore the n-gram method cannot give good marks to the right matching as they do not share enough number of components. This example tells that although the global edit distance is the slowest one. It can sometimes the right answer for specific tasks. 
 
-\section{Application}
-
-
 \section{Conclusions}
+This report evaluates several approximate matching methods' performances in spelling corrections. Different methods have different advantages as their flavours are not the same. For use in reality, a combination of these methods can apply. The precision of the approximate matching might be improved if statistics of real-world word frequency is provided. It also shows that in the non-contextual environment, doing matchings are sometimes not reasonable as the spelling might conflict with the users' sentences.    
+
+\begin{thebibliography}{9}
+\bibitem{} 
+Zobel, Justin and Philip Dart
+\textit{Phonetic String Matching: Lessons from Informa-tion Retrieval}. 
+In Proceedings of the Eighteenth International ACM SIGIR Conference on Research and Development in Information Retrieval. Zu?rich, Switzerland. pp. 166?173.
+ 
+\bibitem{} 
+Naomi Saphra and Adam Lopez
+\textit{Evaluating Informal-Domain Word Representations with UrbanDictionary}
+In Proceedings of the 1st Workshop on Evaluating Vector-Space Representations for NLP, Berlin, Germany. pp. 94?98.
+
+\bibitem{} 
+F. J. Damerau
+\textit{A technique for computer detection and correction of spelling errors}
+Communications of the ACM, vol. 7, no. 3, pp. 171?176, 1964.
+
+\bibitem{} 
+Navarro, G
+\textit{A guided tour to approximate string matching}
+ACM computing surveys (CSUR), 33(1), 31-88.
+
+\end{thebibliography}
 
 
 
-\bibliographystyle{acl}
-\bibliography{sample}
 
 \end{document}

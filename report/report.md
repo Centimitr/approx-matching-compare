@@ -46,6 +46,5 @@ is the best
 
 # Refrences
 
-Zobel, Justin and Philip Dart. (1996). Phonetic String Matching: Lessons from Informa-tion Retrieval. In Proceedings of the Eighteenth International ACM SIGIR Conference on Research and Development in Information Retrieval. Zu ̈rich, Switzerland. pp. 166–173.
+Zobel, Justin and Philip Dart. (1996). . 
 
-Naomi Saphra and Adam Lopez (2016) Evaluating Informal-Domain Word Representations with UrbanDictionary. In Proceedings of the 1st Workshop on Evaluating Vector-Space Representations for NLP, Berlin, Germany. pp. 94–98.
