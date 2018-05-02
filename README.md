@@ -1,8 +1,6 @@
-# COMP90049 - Project 1
+# approx-matching-compare
 
-Student ID: 879849
-
-Name: Xiao Shi
+This is the code repository for one of my University assignment. 
 
 ## How to run
 This program is built with the Go programming language and the frontend use Angular 1 to analyse the output json result.
@@ -21,13 +19,11 @@ This program is completely written by me, only the Go Standard Library is used. 
 
 ## Performance
 
-Developed and tested under macOS 10.13.4. The machine used is 2.6GHz Intel Core i7 (4 cores, 8 threads) with 16GB memory.
+Developed and tested under macOS 10.13.4. The machine used is 2.6GHz Intel Core i7 (4 cores, 8 threads) with 16GB memory. CPU load keeps around 770%, and can finish the 10 defined task in 3m30s (GED in 1m20s).
 
-The program is written to fully utilise the multi-threading performance and consume at most 8.5GB memory.
-As the machine is 4 cores 8 threads, the program is always using around 770% CPU load, and can finish the 10 defined task in 3m30s (GED in 1m20s).
-So I think its performance is **quiet good**. The program is not much optimized for memory usages, as the load is easy for my machine.
+I do not clean the memory when after using a method, it is meaningless for me but it might affect your tasks' performance. The GED method implmented using two columns to save memory so it does not support looking back.
 
-## Complex description of How to run
+## Complex - How to run
 
 1. Install Go 1.8+, [https://golang.org/dl/](https://golang.org/dl/)
 2. Run `$ go build` in this directory
@@ -105,4 +101,4 @@ Total: 1.824904882s
 TIME: 3m23.449191643s
 ```
 
-Wed, 11 Apr 2018
+<sup>Wed, 11 Apr 2018</sup>
